@@ -71,7 +71,6 @@ export function handleFindLobby(ws, data) {
     }
 }
 
-// In lobbyManager.js
 export function removePlayerFromLobby(ws) {
     for (const [lobbyId, players] of lobbies.entries()) {
         const index = players.findIndex((player) => player.ws === ws);
