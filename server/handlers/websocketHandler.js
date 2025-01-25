@@ -1,5 +1,5 @@
 import { handleFindLobby, removePlayerFromLobby } from "./lobbyManager.js";
-import { handleMakeMove } from "./gameHandler.js";
+import { handleMakeMove, handleDisconnect } from "./gameHandler.js";
 
 export function handleWebSocket() {
     return {
@@ -10,6 +10,7 @@ export function handleWebSocket() {
             const data = JSON.parse(message);
             if (data.action === "findLobby") handleFindLobby(ws, data);
             if (data.action === "makeMove") handleMakeMove(ws, data);
+            if (data.action === "disconnect") handleDisconnect(ws, data);
         },
         close(ws) {
             console.log("Client disconnected");

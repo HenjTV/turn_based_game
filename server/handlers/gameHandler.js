@@ -1,4 +1,4 @@
-import { lobbies } from './lobbyManager.js';
+import { lobbies, removePlayerFromLobby } from './lobbyManager.js';
 import { resolveMoves } from '../utils/moveResolver.js';
 import { createUpdateMessage } from '../utils/messageHelper.js';
 
@@ -39,4 +39,9 @@ export function handleMakeMove(ws, data) {
         player2.ws.send(createUpdateMessage(player2, player1, nextTurn));
         opponent.ws.send(JSON.stringify({ action: "enableButtons" }));
     }
+}
+
+export function handleDisconnect(ws, data) {
+    console.log("DATA:", data);
+    removePlayerFromLobby(ws);
 }

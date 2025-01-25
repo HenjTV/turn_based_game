@@ -65,6 +65,18 @@ export function handleFindLobby(gameClient) {
     );
 }
 
+export function disconnectClient(event, gameClient) {
+    if (event.target.tagName !== "BUTTON") return;
+
+    gameClient.ws.send(
+        JSON.stringify({
+            action: "disconnect",
+            lobbyId: gameClient.state.lobbyId,
+            playerName: gameClient.state.playerName,
+        })
+    );
+}
+
 export function handleMoveButtonClick(event, gameClient) {
     if (event.target.tagName !== "BUTTON") return;
 
