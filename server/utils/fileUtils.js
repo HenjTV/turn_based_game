@@ -24,6 +24,12 @@ export function getCharacterImages(folderPath) {
  */
 export function serveFile(filePath, defaultType = "application/octet-stream") {
     try {
+        const stats = fs.statSync(filePath);
+
+        if (stats.isDirectory()) {
+            return new Response("Cannot serve a directory", { status: 400 });
+        }
+
         const file = Bun.file(filePath);
         if (file.size === 0) throw new Error("File not found");
 

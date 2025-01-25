@@ -1,8 +1,9 @@
 import path from "path";
 import { getCharacterImages, serveFile } from "../utils/fileUtils.js";
 
-const PUBLIC_DIR = path.resolve("../public");
-const CHARACTER_IMAGES_FOLDER = path.resolve("../images/characters");
+// Go up two levels from server/handlers to the root of the project
+const PUBLIC_DIR = path.resolve(__dirname, "../../public");
+const CHARACTER_IMAGES_FOLDER = path.resolve(__dirname, "../../images/characters");
 
 export function handleRequest(req, server) {
     const url = new URL(req.url);

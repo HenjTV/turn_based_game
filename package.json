@@ -4,6 +4,7 @@
     "start": "bun run /server/server.js"
   },
   "dependencies": {
+    "bun": "^1.2.0",
     "mime-types": "^2.1.35",
     "ws": "^8.18.0"
   }

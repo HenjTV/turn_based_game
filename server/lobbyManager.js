@@ -86,6 +86,7 @@ export function removePlayerFromLobby(ws) {
                     reason: "opponent_disconnected",
                 });
                 remainingPlayer.ws.send(gameOverMessage);
+                remainingPlayer.ws.close();
             }
 
             // Clean up empty lobbies
