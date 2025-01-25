@@ -29,6 +29,8 @@ class GameClient {
             playerName: document.getElementById("playerName"),
             opponentName: document.getElementById("opponentName"),
             characterSelect: document.getElementById("characterSelect"),
+            playerCharacter: document.getElementById("playerCharacter"),
+            opponentCharacter: document.getElementById("opponentCharacter"),
         };
     }
 
@@ -47,8 +49,9 @@ class GameClient {
             const response = await fetch("/api/characters");
 
             if (!response.ok) {
-                // If response is not OK, throw an error
-                throw new Error(`Failed to load character options: ${response.statusText}`);
+                throw new Error(
+                    `Failed to load character options: ${response.statusText}`
+                );
             }
 
             const data = await response.json();
@@ -76,23 +79,26 @@ class GameClient {
     }
 
     selectCharacter(selectedDiv) {
-        // Highlight the selected character
         const options = document.querySelectorAll(".character-option");
-        options.forEach(option => option.classList.remove("selected"));
+        options.forEach((option) => option.classList.remove("selected"));
         selectedDiv.classList.add("selected");
 
-        // Store the selected character in the state
         this.state.selectedCharacter = selectedDiv.dataset.character;
+        console.log("Selected character:", this.state.selectedCharacter);
     }
 
     handleFindLobby() {
         this.state.playerName = this.selectors.nameInput.value;
-        if (!this.state.playerName) return;
+        if (!this.state.playerName || !this.state.selectedCharacter) {
+            alert("Please enter your name and select a character!");
+            return;
+        }
 
         this.ws.send(
             JSON.stringify({
                 action: "findLobby",
                 name: this.state.playerName,
+                character: this.state.selectedCharacter,
             })
         );
     }
@@ -132,6 +138,9 @@ class GameClient {
         gameStart: (data) => {
             this.state.lobbyId = data.lobbyId;
             this.state.currentTurn = data.currentTurn;
+
+            this.selectors.playerCharacter.src = `/images/characters/${data.playerCharacter}`;
+            this.selectors.opponentCharacter.src = `/images/characters/${data.opponentCharacter}`;
 
             this.updatePlayerInfo(data);
             this.showGameScreen();

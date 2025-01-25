@@ -9,6 +9,8 @@ export function createGameStateMessage(player, opponent, lobbyId, currentTurn) {
         playerHp: player.hp,
         opponentHp: opponent.hp,
         currentTurn: currentTurn,
+        playerCharacter: player.character,
+        opponentCharacter: opponent.character,
     });
 }
 
@@ -20,11 +22,18 @@ export function createUpdateMessage(player, opponent, currentTurn) {
         playerHp: player.hp,
         opponentHp: opponent.hp,
         currentTurn: currentTurn,
+        playerCharacter: player.character,
+        opponentCharacter: opponent.character,
     });
 }
 
 export function handleFindLobby(ws, data) {
-    const player = { ws, name: data.name, hp: 100 };
+    const player = {
+        ws,
+        name: data.name,
+        hp: 100,
+        character: data.character
+    };
     let foundLobby = false;
 
     for (const [lobbyId, players] of lobbies.entries()) {
