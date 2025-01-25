@@ -1,0 +1,31 @@
+{
+    "moves": {
+        "attack": {
+            "type": "damage",
+            "value": 10,
+            "interactions": {
+                "heal": {
+                    "modifier": "reduce_damage",
+                    "value": 5
+                },
+                "block": {
+                    "modifier": "reduce_damage",
+                    "value": 0
+                }
+            }
+        },
+        "block": {
+            "type": "block",
+            "value": 0
+        },
+        "heal": {
+            "type": "heal",
+            "value": 5,
+            "interactions": {
+                "attack": {
+                    "modifier": "cancel_heal"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turn-Based Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="login">
+        <h1>Login</h1>
+        <input type="text" id="name" placeholder="Enter your name" />
+        <button id="findLobby">Find Lobby</button>
+    </div>
+
+    <div id="game">
+        <h1>Game</h1>
+        <div class="game-container">
+            <div class="player-section">
+                <h2 id="playerName">You</h2>
+                <div id="playerHp">HP: 100</div>
+                <div id="move-buttons">
+                    <button data-move="attack">Attack</button>
+                    <button data-move="block">Block</button>
+                    <button data-move="heal">Heal</button>
+                </div>
+            </div>
+            <div class="enemy-section">
+                <h2 id="opponentName">Opponent</h2>
+                <div id="opponentHp">HP: 100</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="waiting-message">
+        <p>Waiting for another player...</p>
+    </div>
+
+    <script src="client.js"></script>
+</body>
+
+</html>
