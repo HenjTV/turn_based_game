@@ -1,5 +1,5 @@
-import { handleFindLobby, removePlayerFromLobby } from "../lobbyManager.js";
-import { handleMakeMove } from "../gameHandler.js";
+import { handleFindLobby, removePlayerFromLobby } from "./lobbyManager.js";
+import { handleMakeMove } from "./gameHandler.js";
 
 export function handleWebSocket() {
     return {

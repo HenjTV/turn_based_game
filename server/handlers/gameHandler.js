@@ -1,6 +1,6 @@
 import { lobbies } from './lobbyManager.js';
-import { resolveMoves } from './moveResolver.js';
-import { createUpdateMessage } from './messageHelper.js';
+import { resolveMoves } from '../utils/moveResolver.js';
+import { createUpdateMessage } from '../utils/messageHelper.js';
 
 export function handleMakeMove(ws, data) {
     const { lobbyId, move, playerName } = data;
