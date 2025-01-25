@@ -11,6 +11,9 @@
 <body>
     <div id="login">
         <h1>Login</h1>
+        <div class="character-select" id="characterSelect">
+            <!-- Dynamic content will be inserted here -->
+        </div>
         <input type="text" id="name" placeholder="Enter your name" />
         <button id="findLobby">Find Lobby</button>
     </div>
@@ -19,6 +22,9 @@
         <h1>Game</h1>
         <div class="game-container">
             <div class="player-section">
+                <div class="character-portrait">
+                    <img id="playerCharacter" alt="Your character">
+                </div>
                 <h2 id="playerName">You</h2>
                 <div id="playerHp">HP: 100</div>
                 <div id="move-buttons">
@@ -28,6 +34,9 @@
                 </div>
             </div>
             <div class="enemy-section">
+                <div class="character-portrait">
+                    <img id="opponentCharacter" alt="Opponent character">
+                </div>
                 <h2 id="opponentName">Opponent</h2>
                 <div id="opponentHp">HP: 100</div>
             </div>
@@ -38,7 +47,7 @@
         <p>Waiting for another player...</p>
     </div>
 
-    <script src="client.js"></script>
+    <script src="/client.js"></script>
 </body>
 
 </html>

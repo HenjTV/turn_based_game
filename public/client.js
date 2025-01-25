@@ -4,6 +4,7 @@ class GameClient {
         this.initializeSelectors();
         this.setupEventListeners();
         this.initializeState();
+        this.loadCharacterOptions();
     }
 
     initializeState() {
@@ -27,6 +28,7 @@ class GameClient {
             moveButtons: document.getElementById("move-buttons"),
             playerName: document.getElementById("playerName"),
             opponentName: document.getElementById("opponentName"),
+            characterSelect: document.getElementById("characterSelect"),
         };
     }
 
@@ -38,6 +40,49 @@ class GameClient {
             this.handleMoveButtonClick(e)
         );
         this.ws.onmessage = (event) => this.handleServerMessage(event);
+    }
+    // Load character options from the server
+    async loadCharacterOptions() {
+        try {
+            const response = await fetch("/api/characters");
+
+            if (!response.ok) {
+                // If response is not OK, throw an error
+                throw new Error(`Failed to load character options: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+
+            const characterSelect = this.selectors.characterSelect;
+            characterSelect.innerHTML = ""; // Clear any existing options
+
+            data.characters.forEach((character) => {
+                const div = document.createElement("div");
+                div.className = "character-option";
+                div.dataset.character = character;
+
+                const img = document.createElement("img");
+                img.src = `/images/characters/${character}`;
+                img.alt = character;
+
+                div.appendChild(img);
+                div.addEventListener("click", () => this.selectCharacter(div));
+
+                characterSelect.appendChild(div);
+            });
+        } catch (error) {
+            console.error("Error loading character options:", error);
+        }
+    }
+
+    selectCharacter(selectedDiv) {
+        // Highlight the selected character
+        const options = document.querySelectorAll(".character-option");
+        options.forEach(option => option.classList.remove("selected"));
+        selectedDiv.classList.add("selected");
+
+        // Store the selected character in the state
+        this.state.selectedCharacter = selectedDiv.dataset.character;
     }
 
     handleFindLobby() {
@@ -77,7 +122,6 @@ class GameClient {
             this.messageHandlers[data.action] || this.handleUnknownMessage;
         handler.call(this, data);
     }
-
     messageHandlers = {
         waitingForPlayer: (data) => {
             this.selectors.loginDiv.style.display = "none";
