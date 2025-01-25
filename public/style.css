@@ -151,3 +151,54 @@ h2 {
     border-radius: 10px;
     border: 3px solid #3498db;
 }
+
+.hp-current {
+    background-color: #e74c3c; /* Bright red */
+    height: 100%;
+    width: 100%;
+    transition: width 0.3s ease-in-out;
+    border-radius: 10px;
+}
+
+.hp-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    pointer-events: none; /* Prevent text from blocking clicks */
+}
+
+.stat-container {
+    position: relative;
+    margin: 15px 0;
+    width: 200px;
+}
+
+.stat-bar {
+    background-color: #5a1a1a;
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.stat-current {
+    height: 100%;
+    width: 100%;
+    transition: width 0.3s ease-in-out;
+    border-radius: 10px;
+}
+
+.stat-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+}

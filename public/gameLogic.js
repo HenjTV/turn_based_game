@@ -5,6 +5,7 @@ export function initializeState() {
         currentTurn: "",
         isMyTurn: false,
         selectedCharacter: null,
+        statsConfig: null,
     };
 }
 
@@ -83,6 +84,21 @@ function sendMove(move, gameClient) {
     );
 }
 
+export async function loadStatsConfig(gameClient) {
+    try {
+        const response = await fetch("/config/stats.json"); // Adjust the path based on your setup
+        if (!response.ok) {
+            throw new Error(`Failed to load stats config: ${response.statusText}`);
+        }
+
+        const statsConfig = await response.json();
+        gameClient.state.statsConfig = statsConfig;
+        console.log("Stats configuration loaded:", statsConfig);
+    } catch (error) {
+        console.error("Error loading stats config:", error);
+    }
+}
+
 export function handleServerMessage(event, gameClient) {
     const data = JSON.parse(event.data);
     const handler = messageHandlers[data.action] || handleUnknownMessage;
@@ -126,16 +142,45 @@ const messageHandlers = {
     },
 };
 
+function updateStat(currentValue, statType, gameClient, playerType) {
+    const config = gameClient.state.statsConfig[statType];
+    if (!config) {
+        console.warn(`Stat configuration for "${statType}" not found.`);
+        return;
+    }
+
+    // Determine which selector to target dynamically
+    const containerElement = gameClient.selectors[`${playerType}${statType.charAt(0).toUpperCase() + statType.slice(1)}`];
+    if (!containerElement) {
+        console.warn(`Selector for ${playerType}${statType.charAt(0).toUpperCase() + statType.slice(1)} not found.`);
+        return;
+    }
+
+    const barElement = containerElement.querySelector(`.${statType}-current`);
+    const textElement = containerElement.querySelector(`.${statType}-text`);
+
+    const percentage = (currentValue / config.max) * 100;
+    barElement.style.width = `${percentage}%`;
+    barElement.style.backgroundColor = config.color;
+    textElement.textContent = `${Math.round(currentValue)}/${config.max} ${config.suffix}`;
+}
+
 function updatePlayerInfo(data, gameClient) {
-    gameClient.selectors.playerName.textContent = data.playerName;
-    gameClient.selectors.opponentName.textContent = data.opponentName;
-    gameClient.selectors.playerHp.textContent = `HP: ${data.playerHp}`;
-    gameClient.selectors.opponentHp.textContent = `HP: ${data.opponentHp}`;
+    const { playerName, opponentName } = gameClient.selectors;
+
+    playerName.textContent = data.playerName;
+    opponentName.textContent = data.opponentName;
+
+    // Update both player and opponent HP
+    updateStat(data.playerHp, "hp", gameClient, "player");
+    updateStat(data.opponentHp, "hp", gameClient, "opponent");
 }
 
 function updateGameState(data, gameClient) {
-    gameClient.selectors.playerHp.textContent = `HP: ${data.playerHp}`;
-    gameClient.selectors.opponentHp.textContent = `HP: ${data.opponentHp}`;
+    // Update both player and opponent HP
+    updateStat(data.playerHp, "hp", gameClient, "player");
+    updateStat(data.opponentHp, "hp", gameClient, "opponent");
+
     gameClient.state.currentTurn = data.currentTurn;
 }
 

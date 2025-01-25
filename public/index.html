@@ -26,7 +26,12 @@
                     <img id="playerCharacter" alt="Your character">
                 </div>
                 <h2 id="playerName">You</h2>
-                <div id="playerHp">HP: 100</div>
+                <div id="playerHp" class="stat-container">
+                    <div class="stat-bar">
+                        <div class="hp-current stat-current"></div>
+                    </div>
+                    <span class="stat-text hp-text">100/100 HP</span>
+                </div>
                 <div id="move-buttons">
                     <button data-move="attack">Attack</button>
                     <button data-move="block">Block</button>
@@ -38,7 +43,12 @@
                     <img id="opponentCharacter" alt="Opponent character">
                 </div>
                 <h2 id="opponentName">Opponent</h2>
-                <div id="opponentHp">HP: 100</div>
+                <div id="opponentHp" class="stat-container">
+                    <div class="stat-bar">
+                        <div class="hp-current stat-current"></div>
+                    </div>
+                    <span class="stat-text hp-text">100 HP</span>
+                </div>
             </div>
         </div>
     </div>
