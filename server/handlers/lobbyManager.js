@@ -1,31 +1,19 @@
+import { createGameStateMessage } from '../utils/messageHelper.js';
 export const lobbies = new Map();
 
-export function createGameStateMessage(player, opponent, lobbyId, currentTurn) {
-    return JSON.stringify({
-        action: "gameStart",
-        lobbyId: lobbyId,
-        playerName: player.name,
-        opponentName: opponent.name,
-        playerHp: player.hp,
-        opponentHp: opponent.hp,
-        currentTurn: currentTurn,
-        playerCharacter: player.character,
-        opponentCharacter: opponent.character,
-    });
-}
-
-export function createUpdateMessage(player, opponent, currentTurn) {
-    return JSON.stringify({
-        action: "updateGame",
-        playerName: player.name,
-        opponentName: opponent.name,
-        playerHp: player.hp,
-        opponentHp: opponent.hp,
-        currentTurn: currentTurn,
-        playerCharacter: player.character,
-        opponentCharacter: opponent.character,
-    });
-}
+// export function createGameStateMessage(player, opponent, lobbyId, currentTurn) {
+//     return JSON.stringify({
+//         action: "gameStart",
+//         lobbyId: lobbyId,
+//         playerName: player.name,
+//         opponentName: opponent.name,
+//         playerHp: player.hp,
+//         opponentHp: opponent.hp,
+//         currentTurn: currentTurn,
+//         playerCharacter: player.character,
+//         opponentCharacter: opponent.character,
+//     });
+// }
 
 export function handleFindLobby(ws, data) {
     const player = {
@@ -67,7 +55,7 @@ export function handleFindLobby(ws, data) {
     if (!foundLobby) {
         const lobbyId = `lobby-${lobbies.size + 1}`;
         lobbies.set(lobbyId, [player]);
-        ws.send(JSON.stringify({ action: "waitingForPlayer", lobbyId }));
+        ws.send(JSON.stringify({ action: "waitingForLobby", lobbyId }));
     }
 }
 

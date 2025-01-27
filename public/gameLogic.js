@@ -50,20 +50,51 @@ function selectCharacter(selectedDiv, gameClient) {
 }
 
 export function handleFindLobby(gameClient) {
-    gameClient.state.playerName = gameClient.selectors.nameInput.value;
-    if (!gameClient.state.playerName || !gameClient.state.selectedCharacter) {
-        alert("Please enter your name and select a character!");
+    // Get credentials from localStorage
+    const savedName = gameClient.selectors.usernameInput.value;//localStorage.getItem("playerName");
+    const character = gameClient.state.selectedCharacter;
+
+    if (!savedName || !character) {
+        alert("Please select a character first!");
         return;
     }
 
     gameClient.ws.send(
         JSON.stringify({
             action: "findLobby",
-            name: gameClient.state.playerName,
-            character: gameClient.state.selectedCharacter,
+            name: savedName,
+            character: character,
         })
     );
 }
+
+export function handleCancelMatchmaking(gameClient) {
+    // Hide matchmaking UI
+    gameClient.viewManager.toggleMatchmakingUI(false);
+
+    gameClient.ws.send(
+        JSON.stringify({
+            action: "cancelMatchmaking",
+            lobbyId: gameClient.state.lobbyId,
+        })
+    );
+}
+
+// export function handleFindLobby(gameClient) {
+//     gameClient.state.playerName = gameClient.selectors.usernameInput.value;
+//     if (!gameClient.state.playerName || !gameClient.state.selectedCharacter) {
+//         alert("Please enter your name and select a character!");
+//         return;
+//     }
+
+//     gameClient.ws.send(
+//         JSON.stringify({
+//             action: "findLobby",
+//             name: gameClient.state.playerName,
+//             character: gameClient.state.selectedCharacter,
+//         })
+//     );
+// }
 
 export function disconnectClient(event, gameClient) {
     if (event.target.tagName !== "BUTTON") return;
@@ -82,7 +113,7 @@ export function handleMoveButtonClick(event, gameClient) {
 
     const move = event.target.dataset.move;
     sendMove(move, gameClient);
-    toggleMoveButtons(false, gameClient);
+    gameClient.viewManager.toggleMoveButtons(false);
 }
 
 function sendMove(move, gameClient) {
@@ -118,10 +149,9 @@ export function handleServerMessage(event, gameClient) {
 }
 
 const messageHandlers = {
-    waitingForPlayer: (data, gameClient) => {
-        gameClient.selectors.loginDiv.style.display = "none";
-        gameClient.selectors.waitingMessage.style.display = "flex";
-        gameClient.selectors.gameDiv.style.display = "none";
+    waitingForLobby: (data, gameClient) => {
+         // Show matchmaking UI
+        gameClient.viewManager.toggleMatchmakingUI(true);
     },
 
     gameStart: (data, gameClient) => {
@@ -132,13 +162,14 @@ const messageHandlers = {
         gameClient.selectors.opponentCharacter.src = `/images/characters/${data.opponentCharacter}`;
 
         updatePlayerInfo(data, gameClient);
-        showGameScreen(gameClient);
-        toggleMoveButtons(true, gameClient);
+        gameClient.viewManager.showGameScreen();
+        gameClient.viewManager.toggleMoveButtons(true);
     },
 
     updateGame: (data, gameClient) => {
         updateGameState(data, gameClient);
-        toggleMoveButtons(true, gameClient); //data.currentTurn === this.state.playerName
+        // toggleMoveButtons(true); //data.currentTurn === this.state.playerName
+        gameClient.viewManager.toggleMoveButtons(true);
     },
 
     gameOver: (data, gameClient) => {
@@ -146,12 +177,24 @@ const messageHandlers = {
     },
 
     disableButtons: (data, gameClient) => {
-        toggleMoveButtons(false, gameClient);
+        gameClient.viewManager.toggleMoveButtons(false);
     },
 
     enableButtons: (data, gameClient) => {
-        toggleMoveButtons(true, gameClient);
+        // toggleMoveButtons(true, gameClient);
+        gameClient.viewManager.toggleMoveButtons(true);
     },
+
+    matchmakingCancelled: (data, gameClient) => {
+        gameClient.viewManager.toggleMatchmakingUI(false);
+        alert("Matchmaking cancelled");
+    },
+
+    // Add error handling
+    matchmakingError: (data, gameClient) => {
+        gameClient.viewManager.toggleMatchmakingUI(false);
+        alert(`Matchmaking failed: ${data.reason}`);
+    }
 };
 
 function updateStat(currentValue, statType, gameClient, playerType) {
@@ -195,32 +238,10 @@ function updateGameState(data, gameClient) {
 
     gameClient.state.currentTurn = data.currentTurn;
 }
-
-function showGameScreen(gameClient) {
-    gameClient.selectors.loginDiv.style.display = "none";
-    gameClient.selectors.waitingMessage.style.display = "none";
-    gameClient.selectors.gameDiv.style.display = "block";
-}
-
 function handleGameOver(data, gameClient) {
-    const message =
-        data.reason === "opponent_disconnected"
-            ? "Opponent disconnected! You win!"
-            : `Winner: ${data.winner}`;
-
-    gameClient.selectors.waitingMessage.textContent = message;
-    gameClient.selectors.waitingMessage.style.display = "flex";
-    gameClient.selectors.gameDiv.style.display = "none";
-    toggleMoveButtons(false, gameClient);
-
-    setTimeout(() => {
-        window.location.reload();
-    }, 5000);
-}
-
-function toggleMoveButtons(enabled, gameClient) {
-    const buttons = gameClient.selectors.moveButtons.querySelectorAll("button");
-    buttons.forEach((button) => (button.disabled = !enabled));
+    //${data.winner} contains winner name
+    // gameClient.viewManager.showGmaeOverOverlay(); -- this should disable all buttons exept button to back to menu, after click - call gameClient.viewManager.showMainApp();
+    gameClient.viewManager.toggleGameoverUI(true, data.winner);
 }
 
 function handleUnknownMessage(data) {

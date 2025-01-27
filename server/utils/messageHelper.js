@@ -1,12 +1,14 @@
 export function createGameStateMessage(player, opponent, lobbyId, currentTurn) {
     return JSON.stringify({
         action: "gameStart",
-        lobbyId,
+        lobbyId: lobbyId,
         playerName: player.name,
         opponentName: opponent.name,
         playerHp: player.hp,
         opponentHp: opponent.hp,
-        currentTurn
+        currentTurn: currentTurn,
+        playerCharacter: player.character,
+        opponentCharacter: opponent.character,
     });
 }
 
@@ -17,6 +19,8 @@ export function createUpdateMessage(player, opponent, currentTurn) {
         opponentName: opponent.name,
         playerHp: player.hp,
         opponentHp: opponent.hp,
-        currentTurn
+        currentTurn: currentTurn,
+        playerCharacter: player.character,
+        opponentCharacter: opponent.character,
     });
 }

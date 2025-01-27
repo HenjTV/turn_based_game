@@ -42,6 +42,22 @@ export function handleMakeMove(ws, data) {
 }
 
 export function handleDisconnect(ws, data) {
-    console.log("DATA:", data);
-    removePlayerFromLobby(ws);
+    const { lobbyId, playerName } = data;
+    const lobby = lobbies.get(lobbyId);
+    console.log("DATA:", data, lobby, playerName);
+    if (!lobby) return;
+
+    const [player1, player2] = lobby;
+    // const currentPlayer = player1.name === playerName ? player1 : player2;
+    const opponent = player1.name === playerName ? player2 : player1;
+
+    const gameOverMessage = JSON.stringify({
+        action: "gameOver",
+        opponent
+    });
+
+    player1.ws.send(gameOverMessage);
+    player2.ws.send(gameOverMessage);
+    lobbies.delete(lobbyId);
+    // removePlayerFromLobby(ws);
 }
