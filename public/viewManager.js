@@ -92,6 +92,7 @@ export class ViewManager {
 
     showMainApp() {
         this.toggleMatchmakingUI(false);
+        this.toggleGameoverUI(false);
         this.views.game.classList.add("hidden");
         this.views.login.classList.add("hidden");
         this.views.mainApp.classList.remove("hidden");

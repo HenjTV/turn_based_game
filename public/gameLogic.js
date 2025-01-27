@@ -51,7 +51,8 @@ function selectCharacter(selectedDiv, gameClient) {
 
 export function handleFindLobby(gameClient) {
     // Get credentials from localStorage
-    const savedName = gameClient.selectors.usernameInput.value;//localStorage.getItem("playerName");
+    gameClient.state.playerName = gameClient.selectors.usernameInput.value;
+    const savedName = gameClient.state.playerName;
     const character = gameClient.state.selectedCharacter;
 
     if (!savedName || !character) {
@@ -168,7 +169,6 @@ const messageHandlers = {
 
     updateGame: (data, gameClient) => {
         updateGameState(data, gameClient);
-        // toggleMoveButtons(true); //data.currentTurn === this.state.playerName
         gameClient.viewManager.toggleMoveButtons(true);
     },
 
