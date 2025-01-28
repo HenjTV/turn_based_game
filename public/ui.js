@@ -14,6 +14,10 @@ export function initializeSelectors() {
         findLobbyButton: document.getElementById("start-game"),
         playerHp: document.getElementById("playerHp"),
         opponentHp: document.getElementById("opponentHp"),
+
+        playerResource: document.getElementById("playerResource"),
+        opponentResource: document.getElementById("opponentResource"),
+
         waitingMessage: document.getElementById("waiting-message"),
         moveButtons: document.getElementById("move-buttons"),
         playerName: document.getElementById("playerName"),

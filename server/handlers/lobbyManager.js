@@ -1,27 +1,29 @@
 import { createGameStateMessage } from '../utils/messageHelper.js';
 export const lobbies = new Map();
 
-// export function createGameStateMessage(player, opponent, lobbyId, currentTurn) {
-//     return JSON.stringify({
-//         action: "gameStart",
-//         lobbyId: lobbyId,
-//         playerName: player.name,
-//         opponentName: opponent.name,
-//         playerHp: player.hp,
-//         opponentHp: opponent.hp,
-//         currentTurn: currentTurn,
-//         playerCharacter: player.character,
-//         opponentCharacter: opponent.character,
-//     });
-// }
+export function initializePlayerState(overrides = {}) {
+    return {
+        name: "",
+        character: null,
+        hp: 100,
+        maxHp: 100,
+        currentResource: 100,
+        maxResource: 100,
+        breakroundleftheal: 0,
+        breakroundleftdefence: 0,
+        powerBar: 0,
+        ...overrides,
+    };
+}
 
 export function handleFindLobby(ws, data) {
-    const player = {
+
+    const player = initializePlayerState({
         ws,
         name: data.name,
-        hp: 100,
-        character: data.character
-    };
+        character: data.character,
+    });
+
     let foundLobby = false;
 
     for (const [lobbyId, players] of lobbies.entries()) {

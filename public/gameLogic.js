@@ -1,4 +1,4 @@
-export function initializeState() {
+export function initializeState(overrides = {}) {
     return {
         playerName: "",
         lobbyId: "",
@@ -6,6 +6,15 @@ export function initializeState() {
         isMyTurn: false,
         selectedCharacter: null,
         statsConfig: null,
+        currentResource: 100,
+        maxResource: 100,
+        resourceType: "Rage",
+        breakroundleftheal: 0,
+        breakroundleftdefence: 0,
+        hp: 100,
+        maxHp: 100,
+        powerBar: 0,
+        ...overrides, // Allow overriding specific properties if needed
     };
 }
 
@@ -102,12 +111,19 @@ export function handleMoveButtonClick(event, gameClient) {
 }
 
 function sendMove(move, gameClient) {
+    const currentState = gameClient.state;
+
     gameClient.ws.send(
         JSON.stringify({
             action: "makeMove",
-            lobbyId: gameClient.state.lobbyId,
+            lobbyId: currentState.lobbyId,
             move: move,
-            playerName: gameClient.state.playerName,
+            playerName: currentState.playerName,
+            currentResource: currentState.currentResource,
+            breakroundleftheal: currentState.breakroundleftheal,
+            breakroundleftdefence: currentState.breakroundleftdefence,
+            hp: currentState.hp,
+            powerBar: currentState.powerBar,
         })
     );
 }
@@ -140,19 +156,25 @@ const messageHandlers = {
     },
 
     gameStart: (data, gameClient) => {
-        gameClient.state.lobbyId = data.lobbyId;
-        gameClient.state.currentTurn = data.currentTurn;
+        const state = gameClient.state;
 
-        gameClient.selectors.playerCharacter.src = `/images/characters/${data.playerCharacter}`;
-        gameClient.selectors.opponentCharacter.src = `/images/characters/${data.opponentCharacter}`;
+        state.lobbyId = data.lobbyId;
+        state.currentTurn = data.currentTurn;
 
-        updatePlayerInfo(data, gameClient);
+        gameClient.selectors.playerCharacter.src = `/images/characters/${data.player.character}`;
+        gameClient.selectors.opponentCharacter.src = `/images/characters/${data.opponent.character}`;
+
+        updatePlayerInfo(data.player, gameClient, "player");
+        updatePlayerInfo(data.opponent, gameClient, "opponent");
+
         gameClient.viewManager.showGameScreen();
         gameClient.viewManager.toggleMoveButtons(true);
     },
 
     updateGame: (data, gameClient) => {
         updateGameState(data, gameClient);
+        updatePlayerInfo(data.player, gameClient, "player");
+        updatePlayerInfo(data.opponent, gameClient, "opponent");
         gameClient.viewManager.toggleMoveButtons(true);
     },
 
@@ -180,48 +202,69 @@ const messageHandlers = {
         alert(`Matchmaking failed: ${data.reason}`);
     }
 };
-
-function updateStat(currentValue, statType, gameClient, playerType) {
-    const config = gameClient.state.statsConfig[statType];
-    if (!config) {
-        console.warn(`Stat configuration for "${statType}" not found.`);
+function updateCooldownIndicator(cooldownType, cooldownValue, gameClient) {
+    const cooldownElement = gameClient.selectors[cooldownType];
+    if (!cooldownElement) {
+        console.warn(`Cooldown element for "${cooldownType}" not found.`);
         return;
     }
 
-    // Determine which selector to target dynamically
-    const containerElement = gameClient.selectors[`${playerType}${statType.charAt(0).toUpperCase() + statType.slice(1)}`];
-    if (!containerElement) {
-        console.warn(`Selector for ${playerType}${statType.charAt(0).toUpperCase() + statType.slice(1)} not found.`);
-        return;
+    if (cooldownValue > 0) {
+        cooldownElement.textContent = `Cooldown: ${cooldownValue}`;
+        cooldownElement.style.display = "block";
+    } else {
+        cooldownElement.textContent = "";
+        cooldownElement.style.display = "none";
+    }
+}
+
+function updatePlayerInfo(playerData, gameClient, playerType) {
+    const viewManager = gameClient.viewManager;
+
+    // Update player/opponent name
+    const playerNameElement = gameClient.selectors[`${playerType}Name`];
+    if (playerNameElement) {
+        playerNameElement.textContent = playerData.name;
     }
 
-    const barElement = containerElement.querySelector(`.${statType}-current`);
-    const textElement = containerElement.querySelector(`.${statType}-text`);
+    viewManager.updateStat(playerData.hp, "hp", playerType);
+    viewManager.updateStat(playerData.currentResource, "resource", playerType);
 
-    const percentage = (currentValue / config.max) * 100;
-    barElement.style.width = `${percentage}%`;
-    barElement.style.backgroundColor = config.color;
-    textElement.textContent = `${Math.round(currentValue)}/${config.max} ${config.suffix}`;
+    // updateCooldownIndicator(`${playerType}BreakDefense`, playerData.breakDefense, gameClient);
+    // updateCooldownIndicator(`${playerType}BreakHeal`, playerData.breakHeal, gameClient);
 }
-
-function updatePlayerInfo(data, gameClient) {
-    const { playerName, opponentName } = gameClient.selectors;
-
-    playerName.textContent = data.playerName;
-    opponentName.textContent = data.opponentName;
-
-    // Update both player and opponent HP
-    updateStat(data.playerHp, "hp", gameClient, "player");
-    updateStat(data.opponentHp, "hp", gameClient, "opponent");
-}
-
 function updateGameState(data, gameClient) {
-    // Update both player and opponent HP
-    updateStat(data.playerHp, "hp", gameClient, "player");
-    updateStat(data.opponentHp, "hp", gameClient, "opponent");
+    const state = gameClient.state;
 
-    gameClient.state.currentTurn = data.currentTurn;
+    // Update current turn
+    state.currentTurn = data.currentTurn;
+
+    // Update player and opponent HP
+    state.hp = data.player.hp;
+    state.opponentHp = data.opponent.hp;
+
+    // Update resource values for both players
+    state.currentResource = data.player.currentResource || state.currentResource;
+    state.opponentResource = data.opponent.currentResource || state.opponentResource;
+
+    // Update cooldowns
+    state.breakroundleftheal = data.player.breakHeal || state.breakroundleftheal;
+;
+    state.breakroundleftdefence = data.player.breakDefense || state.breakroundleftdefence;
+
+    // Update power bar values
+    state.powerBar = data.player.powerBar || state.powerBar;
+    state.opponentPowerBar = data.opponent.powerBar || state.opponentPowerBar;
+
+    // Ensure resources don't exceed max values
+    state.currentResource = Math.min(state.currentResource, state.maxResource);
+    state.opponentResource = Math.min(state.opponentResource, state.maxResource);
+
+    // Ensure HP doesn't exceed max values
+    state.hp = Math.min(state.hp, state.maxHp);
+    state.opponentHp = Math.min(state.opponentHp, state.maxHp);
 }
+
 function handleGameOver(data, gameClient) {
     console.log("Game over:", data);
     const winnerName = data.winner || "Unknown";
@@ -229,5 +272,5 @@ function handleGameOver(data, gameClient) {
 }
 
 function handleUnknownMessage(data) {
-    console.warn("Unknown message type:", data.action);
+    console.warn("Unknown message type:", data.action, data);
 }

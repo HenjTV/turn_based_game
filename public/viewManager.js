@@ -10,6 +10,29 @@ export class ViewManager {
         this.navButtons = document.querySelectorAll(".nav-btn");
         this.initializeNavigation();
     }
+    updateStat(currentValue, statType, playerType) {
+        console.log("Updating stat:", currentValue, statType, playerType);
+        const config = this.gameClient.state.statsConfig[statType];
+        if (!config) {
+            console.warn(`Stat configuration for "${statType}" not found.`);
+            return;
+        }
+
+        // Determine which selector to target dynamically
+        const containerElement = this.gameClient.selectors[`${playerType}${statType.charAt(0).toUpperCase() + statType.slice(1)}`];
+        if (!containerElement) {
+            console.warn(`Selector for ${playerType}${statType.charAt(0).toUpperCase() + statType.slice(1)} not found.`);
+            return;
+        }
+
+        const barElement = containerElement.querySelector(`.${statType}-current`);
+        const textElement = containerElement.querySelector(`.${statType}-text`);
+
+        const percentage = (currentValue / config.max) * 100;
+        barElement.style.width = `${percentage}%`;
+        barElement.style.backgroundColor = config.color;
+        textElement.textContent = `${Math.round(currentValue)}/${config.max} ${config.suffix}`;
+    }
     initializeNavigation() {
         this.navButtons.forEach((btn) => {
             btn.addEventListener("click", () => {
@@ -69,32 +92,6 @@ export class ViewManager {
             targetView.classList.remove("hidden");
         }
     }
-    // initializeNavigation() {
-    //     this.navButtons.forEach((btn) => {
-    //         btn.addEventListener("click", () => {
-    //             const viewId = btn.dataset.view;
-    //             this.showView(viewId);
-    //         });
-    //     });
-    // }
-    // showView(viewId) {
-    //     // Hide all views
-    //     document.querySelectorAll(".view").forEach((view) => {
-    //         view.classList.remove("active");
-    //     });
-
-    //     // Update navigation buttons
-    //     this.navButtons.forEach((btn) => {
-    //         btn.classList.toggle("active", btn.dataset.view === viewId);
-    //     });
-
-    //     // Show selected view
-    //     const targetView = document.getElementById(`${viewId}-view`);
-    //     if (targetView) {
-    //         targetView.classList.add("active");
-    //         this.loadViewContent(viewId);
-    //     }
-    // }
 
     loadViewContent(viewId) {
         switch (viewId) {

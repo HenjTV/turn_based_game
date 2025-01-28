@@ -64,9 +64,6 @@
         <h1>Game</h1>
         <div class="game-container">
             <div class="player-section">
-                <div class="character-portrait">
-                    <img id="playerCharacter" alt="Your character">
-                </div>
                 <h2 id="playerName">You</h2>
                 <div id="playerHp" class="stat-container">
                     <div class="stat-bar">
@@ -74,22 +71,39 @@
                     </div>
                     <span class="stat-text hp-text">100/100 HP</span>
                 </div>
+                <div id="playerResource" class="stat-container">
+                    <div class="stat-bar">
+                        <div class="resource-current stat-current"></div>
+                    </div>
+                    <span class="stat-text resource-text">100/100 R</span>
+                </div>
+                <div class="character-portrait">
+                    <img id="playerCharacter" alt="Your character">
+                </div>
                 <div id="move-buttons">
                     <button data-move="attack">Attack</button>
-                    <button data-move="block">Block</button>
+                    <button data-move="defend">Defend</button>
+                    <button data-move="parry">Parry</button>
+                    <button data-move="kick">Kick</button>
                     <button data-move="heal">Heal</button>
                 </div>
             </div>
             <div class="enemy-section">
-                <div class="character-portrait">
-                    <img id="opponentCharacter" alt="Opponent character">
-                </div>
                 <h2 id="opponentName">Opponent</h2>
                 <div id="opponentHp" class="stat-container">
                     <div class="stat-bar">
                         <div class="hp-current stat-current"></div>
                     </div>
                     <span class="stat-text hp-text">100 HP</span>
+                </div>
+                <div id="opponentResource" class="stat-container">
+                    <div class="stat-bar">
+                        <div class="resource-current stat-current"></div>
+                    </div>
+                    <span class="stat-text resource-text">100/100 R</span>
+                </div>
+                <div class="character-portrait">
+                    <img id="opponentCharacter" alt="Opponent character">
                 </div>
             </div>
         </div>

@@ -30,9 +30,11 @@ export function handleMakeMove(ws, data) {
     currentPlayer.move = move;
     sendMessage(currentPlayer.ws, { action: "disableButtons" });
 
+    console.log("PLAYER DATA", currentPlayer, opponent);
     // Process moves if both players have acted
     if (lobby[0].move && lobby[1].move) {
         resolveMoves(lobby[0], lobby[1]);
+
         lobby[0].move = null;
         lobby[1].move = null;
 
@@ -40,7 +42,6 @@ export function handleMakeMove(ws, data) {
         if (lobby[0].hp <= 0 || lobby[1].hp <= 0) {
             const winner = lobby[0].hp > 0 ? lobby[0].name : lobby[1].name;
             const gameOverMessage = { action: "gameOver", winner };
-
             sendMessage(lobby[0].ws, gameOverMessage);
             sendMessage(lobby[1].ws, gameOverMessage);
             lobbies.delete(lobbyId);
@@ -48,6 +49,7 @@ export function handleMakeMove(ws, data) {
         }
 
         // Update game state for the next turn
+        console.log("DATA", lobby[0].hp, lobby[1].hp);
         const nextTurn = opponent.name;
         sendMessage(lobby[0].ws, createUpdateMessage(lobby[0], lobby[1], nextTurn));
         sendMessage(lobby[1].ws, createUpdateMessage(lobby[1], lobby[0], nextTurn));

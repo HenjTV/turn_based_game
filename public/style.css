@@ -21,7 +21,7 @@ body {
 
 #game {
     width: 100%;
-    max-width: 800px;
+    /* max-width: 800px; */
     margin: 0 auto;
     padding: 20px;
     background-color: #34495e;
@@ -325,4 +325,57 @@ h2 {
 button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+/* ===== Add these new rules at the end of your CSS file ===== */
+/* Character portrait + stats layout */
+.player-section .character-portrait,
+.enemy-section .character-portrait {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+/* Player section layout (image left, stats right) */
+.player-section .character-portrait {
+    flex-direction: row;
+}
+
+/* Enemy section layout (image right, stats left) */
+.enemy-section .character-portrait {
+    flex-direction: row-reverse;
+}
+.enemy-section .stat-container {
+    margin-right: 15px;
+}
+
+/* Adjust character portrait size */
+.character-portrait img {
+    width: 150px;
+    height: 150px;
+    flex-shrink: 0;
+}
+
+/* Button layout adjustments */
+#move-buttons {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+#move-buttons button {
+    flex: 1 1 100px;
+    min-width: 100px;
+}
+
+/* Opponent text alignment */
+.enemy-section h2 {
+    text-align: right;
+}
+
+/* Stat bar adjustments */
+.stat-container {
+    width: 180px;
+    margin: 10px 0;
 }

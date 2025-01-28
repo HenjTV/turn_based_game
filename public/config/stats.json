@@ -4,8 +4,8 @@
         "suffix": "HP",
         "color": "#e74c3c"
     },
-    "stamina": {
-        "max": 50,
+    "resource": {
+        "max": 100,
         "suffix": "SP",
         "color": "#3498db"
     }
