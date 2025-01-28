@@ -81,22 +81,6 @@ export function handleCancelMatchmaking(gameClient) {
     );
 }
 
-// export function handleFindLobby(gameClient) {
-//     gameClient.state.playerName = gameClient.selectors.usernameInput.value;
-//     if (!gameClient.state.playerName || !gameClient.state.selectedCharacter) {
-//         alert("Please enter your name and select a character!");
-//         return;
-//     }
-
-//     gameClient.ws.send(
-//         JSON.stringify({
-//             action: "findLobby",
-//             name: gameClient.state.playerName,
-//             character: gameClient.state.selectedCharacter,
-//         })
-//     );
-// }
-
 export function disconnectClient(event, gameClient) {
     if (event.target.tagName !== "BUTTON") return;
 
@@ -239,9 +223,9 @@ function updateGameState(data, gameClient) {
     gameClient.state.currentTurn = data.currentTurn;
 }
 function handleGameOver(data, gameClient) {
-    //${data.winner} contains winner name
-    // gameClient.viewManager.showGmaeOverOverlay(); -- this should disable all buttons exept button to back to menu, after click - call gameClient.viewManager.showMainApp();
-    gameClient.viewManager.toggleGameoverUI(true, data.winner);
+    console.log("Game over:", data);
+    const winnerName = data.winner || "Unknown";
+    gameClient.viewManager.toggleGameoverUI(true, winnerName);
 }
 
 function handleUnknownMessage(data) {

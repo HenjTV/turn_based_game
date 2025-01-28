@@ -12,6 +12,7 @@ class GameClient {
         setupEventListeners(this);
         loadCharacterOptions(this);
         loadStatsConfig(this);
+        this.viewManager.showLogin();
     }
 }
 
