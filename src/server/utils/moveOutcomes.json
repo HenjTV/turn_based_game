@@ -12,11 +12,11 @@
                     }
                 },
                 "defend": {
-                    "damageModifier": 0,
+                    "damageModifier": 1,
                     "resourceGain": {}
                 },
                 "parry": {
-                    "damageModifier": 0.5,
+                    "damageModifier": 1,
                     "resourceGain": {
                         "Rage": 5
                     }
@@ -39,15 +39,15 @@
             "powerBarModifier": 0.01,
             "interactions": {
                 "attack": {
-                    "damageModifier": 0,
+                    "damageModifier": 1,
                     "resourceGain": {}
                 },
                 "defend": {
-                    "damageModifier": 0,
+                    "damageModifier": 1,
                     "resourceGain": {}
                 },
                 "parry": {
-                    "damageModifier": 0.5,
+                    "damageModifier": 1,
                     "resourceGain": {}
                 },
                 "kick": {
@@ -57,7 +57,7 @@
                     }
                 },
                 "heal": {
-                    "damageModifier": 0,
+                    "damageModifier": 1,
                     "resourceGain": {}
                 }
             }
@@ -68,13 +68,13 @@
             "powerBarModifier": 0.01,
             "interactions": {
                 "attack": {
-                    "damageModifier": 0.5,
+                    "damageModifier": 1,
                     "resourceGain": {
                         "Rage": 5
                     }
                 },
                 "defend": {
-                    "damageModifier": 0,
+                    "damageModifier": 1,
                     "resourceGain": {}
                 },
                 "parry": {
@@ -82,11 +82,11 @@
                     "resourceGain": {}
                 },
                 "kick": {
-                    "damageModifier": 0.5,
+                    "damageModifier": 1,
                     "resourceGain": {}
                 },
                 "heal": {
-                    "damageModifier": 0,
+                    "damageModifier": 1,
                     "resourceGain": {}
                 }
             }
@@ -109,7 +109,7 @@
                     }
                 },
                 "parry": {
-                    "damageModifier": 0.5,
+                    "damageModifier": 1,
                     "resourceGain": {}
                 },
                 "kick": {
@@ -134,13 +134,13 @@
                     "resourceGain": {}
                 },
                 "defend": {
-                    "damageModifier": 0,
+                    "damageModifier": 1,
                     "resourceGain": {
                         "Mana": 20
                     }
                 },
                 "parry": {
-                    "damageModifier": 0,
+                    "damageModifier": 1,
                     "resourceGain": {
                         "Mana": 20
                     }
@@ -152,7 +152,7 @@
                     }
                 },
                 "heal": {
-                    "damageModifier": 0,
+                    "damageModifier": 1,
                     "resourceGain": {
                         "Mana": 20
                     }
