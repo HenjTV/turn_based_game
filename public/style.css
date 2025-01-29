@@ -202,7 +202,6 @@ h2 {
     pointer-events: none;
 }
 
-
 /* Add these styles */
 .active-view {
     display: block;
@@ -265,8 +264,12 @@ h2 {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* Add to style.css */
@@ -347,6 +350,68 @@ button:disabled {
     flex-direction: row-reverse;
 }
 .enemy-section .stat-container {
+    margin-right: 15px;
+}
+
+/* Adjust character portrait size */
+.character-portrait img {
+    width: 150px;
+    height: 150px;
+    flex-shrink: 0;
+}
+
+/* Button layout adjustments */
+#move-buttons {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+#move-buttons button {
+    flex: 1 1 100px;
+    min-width: 100px;
+}
+
+/* Opponent text alignment */
+.enemy-section h2 {
+    text-align: right;
+}
+
+.status-bars {
+    display: flex;
+    flex-direction: column;
+}
+.opponent-info .status-bars {
+    flex-direction: column-reverse;
+}
+
+.opponent-info .status-bars {
+    float: left;
+}
+
+.opponent-info .status-bars {
+    margin-left: 0;
+    /* margin-right: auto; */
+}
+/* Character portrait + stats layout */
+.player-info,
+.opponent-info {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    gap: 20px;
+}
+
+.player-info {
+    justify-content: flex-end;
+    flex-direction: row-reverse;
+}
+
+.opponent-info {
+    justify-content: flex-start;
+    flex-direction: row-reverse;
+}
+.opponent-info .stat-container {
     margin-right: 15px;
 }
 
