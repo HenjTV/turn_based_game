@@ -444,3 +444,17 @@ button:disabled {
     width: 180px;
     margin: 10px 0;
 }
+
+.power-bar-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.power-bar-container label {
+    margin-right: 10px;
+}
+
+.power-bar-container input[type="range"] {
+    width: 200px;
+}

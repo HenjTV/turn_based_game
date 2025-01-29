@@ -35,7 +35,9 @@ export function initializeSelectors(): Selectors {
         cancelMatchmakingButton: document.getElementById("cancel-matchmaking") as HTMLButtonElement,
         gameoverOverlay: document.getElementById("gameover-overlay"),
         closeGameoverOverlay: document.getElementById("close-gameover") as HTMLButtonElement,
-         allButtons: document.querySelectorAll("button") as NodeListOf<HTMLButtonElement>,
+        allButtons: document.querySelectorAll("button") as NodeListOf<HTMLButtonElement>,
+        powerBar: document.getElementById("powerBar") as HTMLInputElement,
+        powerBarValue: document.getElementById("powerBarValue") as HTMLElement,
     };
 }
 
@@ -61,6 +63,11 @@ export function setupEventListeners(gameClient: GameClient): void {
     gameClient.selectors.closeGameoverOverlay?.addEventListener("click", () =>
         gameClient.viewManager.showMainApp()
     );
+    gameClient.selectors.powerBar?.addEventListener("input", (e) => {
+        const powerBarValue = (e.target as HTMLInputElement).value;
+        gameClient.state.powerBar = parseInt(powerBarValue);
+        gameClient.selectors.powerBarValue.textContent = powerBarValue;
+    });
     gameClient.ws.onmessage = (event) => handleServerMessage(event, gameClient);
 }
 

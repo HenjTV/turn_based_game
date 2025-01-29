@@ -71,11 +71,7 @@ export function resolveMoves(player1: Player, player2: Player): void {
 function calculateEffect(attackerConfig: MoveConfig, defenderMove: string | null | undefined, attacker: Player): Effect {
     const result: Effect = { damage: 0, heal: 0, resourceGain: {}, cooldown: {} };
 
-     console.log("Attacker Config:", attackerConfig);
-    console.log("Attacker PowerBar:", attacker.powerBar);
-     console.log("Base Damage:", attackerConfig.baseDamage);
-    console.log("Power Bar Modifier:", attackerConfig.powerBarModifier);
-     // Base effect
+    // Base effect
     if (attackerConfig.type === "damage") {
         result.damage =
             (attackerConfig.baseDamage || 0) +
@@ -86,16 +82,46 @@ function calculateEffect(attackerConfig: MoveConfig, defenderMove: string | null
             (attackerConfig.powerBarModifier || 0) * attacker.powerBar;
     }
 
-
-    // Apply interactions
+    // Apply interactions based on the new logic
     const interaction = attackerConfig.interactions?.[defenderMove as string];
     if (interaction) {
+        // Default damage modifier
         result.damage *= interaction.damageModifier || 1;
-         if (interaction.resourceGain) {
+
+        // Special logic for Attack > Heal, Kick
+        if (attackerConfig.type === "attack" && (defenderMove === "heal" || defenderMove === "kick")) {
+            result.damage = (attackerConfig.baseDamage || 0) + (attackerConfig.powerBarModifier || 0) * attacker.powerBar; // Full damage
+            result.heal = 0; // Defender's heal doesn't work
+        }
+
+        // Special logic for Defend > Attack, Parry
+        if (attackerConfig.type === "defend" && (defenderMove === "attack" || defenderMove === "parry")) {
+            result.damage = 0; // Defender's attack or parry doesn't work
+        }
+
+        // Special logic for Heal > Defend, Parry
+        if (attackerConfig.type === "heal" && (defenderMove === "defend" || defenderMove === "parry")) {
+            result.heal = (attackerConfig.baseHeal || 0) + (attackerConfig.powerBarModifier || 0) * attacker.powerBar; // Full heal
+            result.damage = 0; // Defender's defend or parry doesn't work
+        }
+
+        // Special logic for Kick > Defend, Heal
+        if (attackerConfig.type === "kick" && (defenderMove === "defend" || defenderMove === "heal")) {
+            result.damage = (attackerConfig.baseDamage || 0) + (attackerConfig.powerBarModifier || 0) * attacker.powerBar; // Full damage
+            result.heal = 0; // Defender's heal doesn't work
+        }
+
+        // Special logic for Parry > Attack, Kick
+        if (attackerConfig.type === "parry" && (defenderMove === "attack" || defenderMove === "kick")) {
+            result.damage = (attackerConfig.baseDamage || 0) + (attackerConfig.powerBarModifier || 0) * attacker.powerBar; // Full damage
+        }
+
+        // Apply resource gain and cooldowns
+        if (interaction.resourceGain) {
             result.resourceGain = interaction.resourceGain;
         }
         if (interaction.cooldown) {
-             result.cooldown = interaction.cooldown;
+            result.cooldown = interaction.cooldown;
         }
     }
 

@@ -26,6 +26,8 @@ export interface Selectors {
     gameoverOverlay: HTMLElement | null;
     closeGameoverOverlay: HTMLButtonElement | null;
     allButtons: NodeListOf<HTMLButtonElement>;
+    powerBar: HTMLInputElement | null;
+    powerBarValue: HTMLElement | null;
 }
 
 export type MoveKey = "attack" | "defend" | "parry" | "kick" | "heal";
