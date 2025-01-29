@@ -1,6 +1,7 @@
-import { initializeState, loadStatsConfig, loadCharacterOptions, GameState } from "./gameLogic";
-import { initializeSelectors, setupEventListeners, Selectors } from "./ui";
+import { initializeState, loadStatsConfig, loadCharacterOptions } from "./gameLogic";
+import { initializeSelectors, setupEventListeners } from "./ui";
 import { ViewManager } from './viewManager';
+import { GameState, Selectors } from "./../types";
 
 export class GameClient {
     ws: WebSocket;

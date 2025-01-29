@@ -1,7 +1,10 @@
 {
   "type": "module",
   "scripts": {
-    "start": "bun run /server/server.js"
+    "start": "bun run server/server.js",
+    "build": "bun build src/client/index.ts --outfile=public/client.js --target=browser --minify && bun build src/server/server.ts --outfile server/server.js --target=bun --minify",
+    "build-dev": "bun build src/client/index.ts --outfile=public/client.js --target=browser && bun build src/server/server.ts --outfile server/server.js --target=bun",
+    "build-es": "esbuild src/client/index.ts --bundle --outfile=public/client.js --platform=browser --format=esm && bun build src/server/server.ts --outfile server/server.js --target=bun"
   },
   "dependencies": {
     "bun": "^1.2.0",
@@ -9,6 +12,8 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@types/mime-types": "^2.1.4",
+    "bun-types": "^1.2.1",
     "esbuild": "^0.24.2"
   }
 }

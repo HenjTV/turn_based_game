@@ -1,5 +1,4 @@
 import { GameClient } from './index';
-import { Selectors } from './ui';
 interface Views {
     login: HTMLElement | null;
     mainApp: HTMLElement | null;

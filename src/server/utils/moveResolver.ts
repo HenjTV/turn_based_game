@@ -1,11 +1,10 @@
-import moveOutcomes from "./moveOutcomes.json" assert { type: "json" };
-import { Player, Effect, MoveConfig, ResourceConfig } from '../../types';
+import moveOutcomes from "./moveOutcomes.json" with { type: "json" };
+import { Player, Effect, MoveConfig, ResourceConfig, MoveKey} from '../../types';
 
 
 export function resolveMoves(player1: Player, player2: Player): void {
-    const move1: string | null | undefined = player1.move;
-    const move2: string | null | undefined = player2.move;
-
+    const move1: MoveKey | null | undefined = player1.move as MoveKey | null | undefined;
+    const move2: MoveKey | null | undefined = player2.move as MoveKey | null | undefined;
 
     // Decrease resources based on power bar usage
     [player1, player2].forEach(player => {
@@ -17,30 +16,29 @@ export function resolveMoves(player1: Player, player2: Player): void {
         if (player.breakroundleftdefence > 0) player.breakroundleftdefence--;
         if (player.breakroundleftheal > 0) player.breakroundleftheal--;
     });
-    // Calculate effects for both players
-    const p1Effect: Effect = calculateEffect(moveOutcomes.moves[move1 as string], move2, player1);
-    const p2Effect: Effect = calculateEffect(moveOutcomes.moves[move2 as string], move1, player2);
 
+    // Calculate effects for both players
+    const p1Effect: Effect = calculateEffect(moveOutcomes.moves[move1 as MoveKey], move2, player1);
+    const p2Effect: Effect = calculateEffect(moveOutcomes.moves[move2 as MoveKey], move1, player2);
 
     // Apply damage with defense consideration
     player2.hp -= calculateFinalDamage(
         p1Effect.damage,
-        moveOutcomes.moves[move2 as string]
+        moveOutcomes.moves[move2 as MoveKey]
     );
     player1.hp += p1Effect.heal;
 
     player1.hp -= calculateFinalDamage(
         p2Effect.damage,
-        moveOutcomes.moves[move1 as string]
+        moveOutcomes.moves[move1 as MoveKey]
     );
     player2.hp += p2Effect.heal;
 
-
     console.log("HP, resources, moves, effects:", player1.hp, player2.hp, move1, move2, p1Effect, p2Effect);
-     // Apply resource changes
+
+    // Apply resource changes
     player1.currentResource += p1Effect.resourceGain[player1.resourceType] || 0;
     player2.currentResource += p2Effect.resourceGain[player2.resourceType] || 0;
-
 
     // Apply cooldowns
     if (p1Effect.cooldown?.breakDefense)
@@ -53,10 +51,8 @@ export function resolveMoves(player1: Player, player2: Player): void {
     if (p2Effect.cooldown?.breakHeal)
         player1.breakroundleftheal = p2Effect.cooldown.breakHeal;
 
-
-     // Regenerate resources
+    // Regenerate resources
     [player1, player2].forEach(player => regenerateResources(player, moveOutcomes.resources));
-
 
     // Ensure health and resources don't exceed max values
     player1.hp = Math.min(player1.hp, player1.maxHp);

@@ -34,7 +34,6 @@ export function serveFile(filePath: string, defaultType: string = "application/o
         if (file.size === 0) throw new Error("File not found");
 
         const contentType = mime.lookup(filePath) || defaultType;
-        console.log(contentType);
         return new Response(file, {
             headers: { "Content-Type": contentType as string },
         });

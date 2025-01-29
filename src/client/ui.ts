@@ -6,34 +6,7 @@ import {
     disconnectClient
 } from "./gameLogic";
 import { GameClient } from "./index";
-
-export interface Selectors {
-    loginDiv: HTMLElement | null;
-    gameDiv: HTMLElement | null;
-    nameInput: HTMLInputElement | null;
-    findLobbyButton: HTMLButtonElement | null;
-    playerHp: HTMLElement | null;
-    opponentHp: HTMLElement | null;
-    playerResource: HTMLElement | null;
-    opponentResource: HTMLElement | null;
-    waitingMessage: HTMLElement | null;
-    moveButtons: HTMLElement | null;
-    playerName: HTMLElement | null;
-    opponentName: HTMLElement | null;
-    characterSelect: HTMLElement | null;
-    playerCharacter: HTMLImageElement | null;
-    opponentCharacter: HTMLImageElement | null;
-    disconnectButton: HTMLButtonElement | null;
-    loginBtn: HTMLButtonElement | null;
-    usernameInput: HTMLInputElement | null;
-    passwordInput: HTMLInputElement | null;
-    registerBtn: HTMLButtonElement | null;
-    matchmakingOverlay: HTMLElement | null;
-    cancelMatchmakingButton: HTMLButtonElement | null;
-    gameoverOverlay: HTMLElement | null;
-    closeGameoverOverlay: HTMLButtonElement | null;
-    allButtons: NodeListOf<HTMLButtonElement>;
-}
+import { Selectors } from "./../types";
 
 
 export function initializeSelectors(): Selectors {

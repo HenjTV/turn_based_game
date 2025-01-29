@@ -3,8 +3,8 @@ import { Server } from "bun";
 import { getCharacterImages, serveFile } from "../utils/fileUtils";
 
 // Go up two levels from server/handlers to the root of the project
-const PUBLIC_DIR: string = path.resolve(__dirname, "../../public");
-const CHARACTER_IMAGES_FOLDER: string = path.resolve(__dirname, "../../images/characters");
+const PUBLIC_DIR: string = path.resolve("./public");
+const CHARACTER_IMAGES_FOLDER: string = path.resolve("./images/characters");
 
 export function handleRequest(req: Request, server: Server): Response | undefined {
     const url = new URL(req.url);
