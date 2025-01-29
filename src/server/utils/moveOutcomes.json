@@ -1,0 +1,185 @@
+{
+    "moves": {
+        "attack": {
+            "type": "damage",
+            "baseDamage": 10,
+            "powerBarModifier": 0.01,
+            "interactions": {
+                "attack": {
+                    "damageModifier": 1,
+                    "resourceGain": {
+                        "Rage": 10
+                    }
+                },
+                "defend": {
+                    "damageModifier": 0,
+                    "resourceGain": {}
+                },
+                "parry": {
+                    "damageModifier": 0.5,
+                    "resourceGain": {
+                        "Rage": 5
+                    }
+                },
+                "kick": {
+                    "damageModifier": 1,
+                    "resourceGain": {
+                        "Rage": 10
+                    }
+                },
+                "heal": {
+                    "damageModifier": 1,
+                    "resourceGain": {}
+                }
+            }
+        },
+        "defend": {
+            "type": "block",
+            "baseDefense": 5,
+            "powerBarModifier": 0.01,
+            "interactions": {
+                "attack": {
+                    "damageModifier": 0,
+                    "resourceGain": {}
+                },
+                "defend": {
+                    "damageModifier": 0,
+                    "resourceGain": {}
+                },
+                "parry": {
+                    "damageModifier": 0.5,
+                    "resourceGain": {}
+                },
+                "kick": {
+                    "damageModifier": 1,
+                    "cooldown": {
+                        "breakDefense": 1
+                    }
+                },
+                "heal": {
+                    "damageModifier": 0,
+                    "resourceGain": {}
+                }
+            }
+        },
+        "parry": {
+            "type": "counter",
+            "baseCounter": 5,
+            "powerBarModifier": 0.01,
+            "interactions": {
+                "attack": {
+                    "damageModifier": 0.5,
+                    "resourceGain": {
+                        "Rage": 5
+                    }
+                },
+                "defend": {
+                    "damageModifier": 0,
+                    "resourceGain": {}
+                },
+                "parry": {
+                    "damageModifier": 1,
+                    "resourceGain": {}
+                },
+                "kick": {
+                    "damageModifier": 0.5,
+                    "resourceGain": {}
+                },
+                "heal": {
+                    "damageModifier": 0,
+                    "resourceGain": {}
+                }
+            }
+        },
+        "kick": {
+            "type": "damage",
+            "baseDamage": 15,
+            "powerBarModifier": 0.01,
+            "interactions": {
+                "attack": {
+                    "damageModifier": 1,
+                    "resourceGain": {
+                        "Rage": 10
+                    }
+                },
+                "defend": {
+                    "damageModifier": 1,
+                    "cooldown": {
+                        "breakDefense": 1
+                    }
+                },
+                "parry": {
+                    "damageModifier": 0.5,
+                    "resourceGain": {}
+                },
+                "kick": {
+                    "damageModifier": 1,
+                    "resourceGain": {}
+                },
+                "heal": {
+                    "damageModifier": 1,
+                    "cooldown": {
+                        "breakHeal": 1
+                    }
+                }
+            }
+        },
+        "heal": {
+            "type": "heal",
+            "baseHeal": 10,
+            "powerBarModifier": 0.01,
+            "interactions": {
+                "attack": {
+                    "damageModifier": 1,
+                    "resourceGain": {}
+                },
+                "defend": {
+                    "damageModifier": 0,
+                    "resourceGain": {
+                        "Mana": 20
+                    }
+                },
+                "parry": {
+                    "damageModifier": 0,
+                    "resourceGain": {
+                        "Mana": 20
+                    }
+                },
+                "kick": {
+                    "damageModifier": 1,
+                    "cooldown": {
+                        "breakHeal": 1
+                    }
+                },
+                "heal": {
+                    "damageModifier": 0,
+                    "resourceGain": {
+                        "Mana": 20
+                    }
+                }
+            }
+        }
+    },
+    "resources": {
+        "Rage": {
+            "regenPerTurn": 10
+        },
+        "Energy": {
+            "regenPerTurn": 10
+        },
+        "Focus": {
+            "regenPerTurn": 10
+        },
+        "Mana": {
+            "regenPerTurn": 20
+        }
+    },
+    "cooldowns": {
+        "breakDefense": {
+            "duration": 1
+        },
+        "breakHeal": {
+            "duration": 1
+        }
+    }
+}

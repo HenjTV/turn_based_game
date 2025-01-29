@@ -1,0 +1,12 @@
+{
+    "hp": {
+        "max": 100,
+        "suffix": "HP",
+        "color": "#e74c3c"
+    },
+    "resource": {
+        "max": 100,
+        "suffix": "SP",
+        "color": "#3498db"
+    }
+}
