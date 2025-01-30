@@ -1,7 +1,4 @@
-import { ServerWebSocket } from "bun";
-import { Player } from '../types';
-
-
+import { Player } from '../../types';
 
 interface PlayerData {
     name: string;

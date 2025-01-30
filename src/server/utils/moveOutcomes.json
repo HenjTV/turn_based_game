@@ -2,8 +2,8 @@
     "moves": {
         "attack": {
             "type": "damage",
-            "baseDamage": 10,
-            "powerBarModifier": 0.01,
+            "baseDamage": 5,
+            "powerBarModifier": 0.5,
             "beats": ["heal", "kick"],
             "interactions": {
                 "attack": {
@@ -36,8 +36,7 @@
         },
         "defend": {
             "type": "block",
-            "baseDefense": 5,
-            "powerBarModifier": 0.01,
+            "powerBarModifier": 0.5,
             "beats": ["attack"],
             "interactions": {
                 "attack": {
@@ -66,8 +65,7 @@
         },
         "parry": {
             "type": "counter",
-            "baseCounter": 5,
-            "powerBarModifier": 0.01,
+            "powerBarModifier": 0.5,
             "beats": ["attack", "kick"],
             "interactions": {
                 "attack": {
@@ -96,8 +94,8 @@
         },
         "kick": {
             "type": "damage",
-            "baseDamage": 15,
-            "powerBarModifier": 0.01,
+            "baseDamage": 5,
+            "powerBarModifier": 0.5,
             "beats": ["defend", "heal"],
             "interactions": {
                 "attack": {
@@ -131,7 +129,7 @@
         "heal": {
             "type": "heal",
             "baseHeal": 10,
-            "powerBarModifier": 0.01,
+            "powerBarModifier": 0.5,
             "beats": ["defend", "parry"],
             "interactions": {
                 "attack": {

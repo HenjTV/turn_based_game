@@ -115,7 +115,7 @@ export function handleMoveButtonClick(event: MouseEvent, gameClient: GameClient)
 
 function sendMove(move: string, gameClient: GameClient): void {
     const currentState = gameClient.state;
-
+    console.log("SEND STATE", currentState);
     gameClient.ws.send(
         JSON.stringify({
             action: "makeMove",
@@ -234,6 +234,7 @@ function updatePlayerInfo(playerData: any, gameClient: GameClient, playerType: s
 
     viewManager.updateStat(playerData.hp, "hp", playerType);
     viewManager.updateStat(playerData.currentResource, "resource", playerType);
+    viewManager.updateBar(playerData.currentResource);
 }
 
 function updateGameState(data: any, gameClient: GameClient): void {

@@ -1,13 +1,13 @@
-import { lobbies, removePlayerFromLobby } from './lobbyManager';
-import { resolveMoves } from '../utils/moveResolver';
-import { createUpdateMessage } from '../utils/messageHelper';
-import { ServerWebSocket } from 'bun';
-import { Player, Players } from '../../types';
-
+import { lobbies, removePlayerFromLobby } from "./lobbyManager";
+import { resolveMoves } from "../utils/moveResolver";
+import { createUpdateMessage } from "../utils/messageHelper";
+import { ServerWebSocket } from "bun";
+import { Player, Players } from "../../types";
 
 function getPlayers(lobby: Player[], playerName: string): Players {
     const [player1, player2] = lobby;
-    const currentPlayer: Player = player1.name === playerName ? player1 : player2;
+    const currentPlayer: Player =
+        player1.name === playerName ? player1 : player2;
     const opponent: Player = player1.name === playerName ? player2 : player1;
     return { currentPlayer, opponent };
 }
@@ -25,45 +25,50 @@ export function handleMakeMove(ws: ServerWebSocket, data: any): void {
 
     // Validate lobby
     const lobby: Player[] | undefined = lobbies.get(lobbyId);
-     if (!lobby) return;
+    if (!lobby) return;
 
     const { currentPlayer, opponent } = getPlayers(lobby, playerName);
 
     // Store move and disable buttons
     currentPlayer.move = move;
+    currentPlayer.powerBar = data.powerBar;
+
     sendMessage(currentPlayer.ws, { action: "disableButtons" });
 
-    console.log("PLAYER DATA", currentPlayer, opponent);
     // Process moves if both players have acted
-    if (lobby[0].move && lobby[1].move) {
-        resolveMoves(lobby[0], lobby[1]);
+    if (currentPlayer.move && opponent.move) {
+        resolveMoves(currentPlayer, opponent);
 
-        lobby[0].move = null;
-        lobby[1].move = null;
+        currentPlayer.move = null;
+        opponent.move = null;
 
-         // Check if the game is over
-        if (lobby[0].hp <= 0 || lobby[1].hp <= 0) {
-            const winner: string = lobby[0].hp > 0 ? lobby[0].name : lobby[1].name;
-             const gameOverMessage = { action: "gameOver", winner };
-            sendMessage(lobby[0].ws, gameOverMessage);
-            sendMessage(lobby[1].ws, gameOverMessage);
+        // Check if the game is over
+        if (currentPlayer.hp <= 0 || opponent.hp <= 0) {
+            const winner: string =
+                currentPlayer.hp > 0 ? currentPlayer.name : opponent.name;
+            const gameOverMessage = { action: "gameOver", winner };
+            sendMessage(currentPlayer.ws, gameOverMessage);
+            sendMessage(opponent.ws, gameOverMessage);
             lobbies.delete(lobbyId);
             return;
         }
-
         // Update game state for the next turn
-         console.log("DATA", lobby[0].hp, lobby[1].hp);
         const nextTurn: string = opponent.name;
-         sendMessage(lobby[0].ws, createUpdateMessage(lobby[0], lobby[1], nextTurn));
-        sendMessage(lobby[1].ws, createUpdateMessage(lobby[1], lobby[0], nextTurn));
+        sendMessage(
+            currentPlayer.ws,
+            createUpdateMessage(currentPlayer, opponent, nextTurn)
+        );
+        sendMessage(
+            opponent.ws,
+            createUpdateMessage(opponent, currentPlayer, nextTurn)
+        );
         sendMessage(opponent.ws, { action: "enableButtons" });
     }
 }
 
-
 // Handle when a player disconnects
 export function handleDisconnect(ws: ServerWebSocket, data: any): void {
-     const { lobbyId, playerName } = data;
+    const { lobbyId, playerName } = data;
 
     // Validate lobby
     const lobby: Player[] | undefined = lobbies.get(lobbyId);
@@ -74,7 +79,7 @@ export function handleDisconnect(ws: ServerWebSocket, data: any): void {
     // Notify the opponent about the game over
     const gameOverMessage = { action: "gameOver", winner: opponent.name };
 
-     sendMessage(lobby[0].ws, gameOverMessage);
+    sendMessage(lobby[0].ws, gameOverMessage);
     sendMessage(lobby[1].ws, gameOverMessage);
-     lobbies.delete(lobbyId);
+    lobbies.delete(lobbyId);
 }

@@ -21,7 +21,7 @@ export function initializeSelectors(): Selectors {
         opponentResource: document.getElementById("opponentResource"),
         waitingMessage: document.getElementById("waiting-message"),
         moveButtons: document.getElementById("move-buttons"),
-         playerName: document.getElementById("playerName"),
+        playerName: document.getElementById("playerName"),
         opponentName: document.getElementById("opponentName"),
         characterSelect: document.getElementById("characterSelect"),
         playerCharacter: document.getElementById("playerCharacter") as HTMLImageElement,

@@ -45,47 +45,44 @@ export function resolveMoves(player1: Player, player2: Player): void {
         p2Effect = calculateEffect(moveOutcomes.moves[move2], move1, player2);
     }
 
-    // Decrease resources and cooldowns
-    [player1, player2].forEach(player => {
-        player.currentResource -= player.powerBar;
-        if (player.breakroundleftdefence > 0) player.breakroundleftdefence--;
-        if (player.breakroundleftheal > 0) player.breakroundleftheal--;
-    });
+    const p1FinalDamage = calculateFinalDamage(p1Effect.damage, moveOutcomes.moves[move2], move2, move1);
+    const p2FinalDamage = calculateFinalDamage(p2Effect.damage, moveOutcomes.moves[move1], move1, move2);
 
-    // Apply damage/heal with defense consideration
-    player2.hp -= calculateFinalDamage(p1Effect.damage, moveOutcomes.moves[move2], move2, move1);
+    player2.hp -= p1FinalDamage;
     player1.hp += p1Effect.heal;
-    player1.hp -= calculateFinalDamage(p2Effect.damage, moveOutcomes.moves[move1], move1, move2);
+    player1.hp -= p2FinalDamage;
     player2.hp += p2Effect.heal;
 
+    [player1, player2].forEach(player => {
+        player.currentResource -= player.powerBar;
+        player.hp = Math.min(player.hp, player.maxHp);
+        player.currentResource = Math.min(player.currentResource, player.maxResource);
+
+        if (player.breakroundleftdefence > 0) player.breakroundleftdefence--;
+        if (player.breakroundleftheal > 0) player.breakroundleftheal--;
+
+        regenerateResources(player, moveOutcomes.resources);
+    });
+
     // Apply resource changes
-    player1.currentResource += p1Effect.resourceGain[player1.resourceType] || 0;
-    player2.currentResource += p2Effect.resourceGain[player2.resourceType] || 0;
+    // player1.currentResource += p1Effect.resourceGain[player1.resourceType] || 0;
+    // player2.currentResource += p2Effect.resourceGain[player2.resourceType] || 0;
 
     // Apply cooldowns
     applyCooldowns(player1, p2Effect.cooldown);
     applyCooldowns(player2, p1Effect.cooldown);
-
-    // Regenerate resources
-    regenerateResources(player1, moveOutcomes.resources);
-    regenerateResources(player2, moveOutcomes.resources);
-
-    // Clamp values
-    player1.hp = Math.min(player1.hp, player1.maxHp);
-    player2.hp = Math.min(player2.hp, player2.maxHp);
-    player1.currentResource = Math.min(player1.currentResource, player1.maxResource);
-    player2.currentResource = Math.min(player2.currentResource, player2.maxResource);
 }
 
 
-function getBaseEffect(config: MoveConfig, attacker: Player) {
+function getBaseEffect(config: MoveConfig, attacker: Player): number {
     switch (config.type) {
         case "damage":
             return (config.baseDamage || 0) + (config.powerBarModifier || 0) * attacker.powerBar;
         case "heal":
             return (config.baseHeal || 0) + (config.powerBarModifier || 0) * attacker.powerBar;
+        case "block":
         case "counter":
-            return 0 + (config.powerBarModifier || 0) * attacker.powerBar;
+            return 0;
         default:
             return 0;
     }
@@ -105,22 +102,54 @@ function applyInteraction(result: Effect, interaction: any) {
 }
 
 
-
-function calculateEffect(attackerConfig: MoveConfig, defenderMove: string | null | undefined, attacker: Player): Effect {
+function getBaseResult(moveConfig: MoveConfig, attacker: Player): Effect {
     const result: Effect = { damage: 0, heal: 0, resourceGain: {}, cooldown: {} };
-    result.damage = getBaseEffect(attackerConfig, attacker);
-    applyInteraction(result, attackerConfig.interactions?.[defenderMove as string]);
+
+    switch (moveConfig.type) {
+        case "damage":
+            result.damage = (moveConfig.baseDamage || 0) + (moveConfig.powerBarModifier || 0) * attacker.powerBar;
+            break;
+        case "heal":
+            result.heal = (moveConfig.baseHeal || 0) + (moveConfig.powerBarModifier || 0) * attacker.powerBar;
+            break;
+        case "block":
+        case "counter":
+            // Defensive moves do nothing by default
+            break;
+    }
+
     return result;
 }
 
-function calculateFullEffect(moveConfig: MoveConfig, attacker: Player, defenderMove: string | null | undefined): Effect {
-    const result: Effect = { damage: 0, heal: 0, resourceGain: {}, cooldown: {} };
-    result.damage = getBaseEffect(moveConfig, attacker);
-    // Skip damageModifier but keep resources/cooldowns
-    if (moveConfig.interactions?.[defenderMove as string]) {
-        result.resourceGain = { ...moveConfig.interactions[defenderMove as string].resourceGain };
-        result.cooldown = { ...moveConfig.interactions[defenderMove as string].cooldown };
+function calculateEffect(
+    attackerConfig: MoveConfig,
+    defenderMove: string | null | undefined,
+    attacker: Player
+): Effect {
+    const result = getBaseResult(attackerConfig, attacker);
+
+    // Apply interaction effects (including damageModifier)
+    if (defenderMove && attackerConfig.interactions?.[defenderMove]) {
+        applyInteraction(result, attackerConfig.interactions[defenderMove]);
     }
+
+    return result;
+}
+
+function calculateFullEffect(
+    moveConfig: MoveConfig,
+    attacker: Player,
+    defenderMove: string | null | undefined
+): Effect {
+    const result = getBaseResult(moveConfig, attacker);
+
+    // Apply only resource/cooldown interactions (no damageModifier)
+    if (defenderMove && moveConfig.interactions?.[defenderMove]) {
+        const interaction = moveConfig.interactions[defenderMove];
+        result.resourceGain = { ...interaction.resourceGain };
+        result.cooldown = { ...interaction.cooldown };
+    }
+
     return result;
 }
 
@@ -130,13 +159,13 @@ function calculateFinalDamage(
     defenderMove: MoveKey,
     attackerMove: MoveKey
 ): number {
-    // Check if attacker's move beats defender's move
     const isBeaten = moveOutcomes.moves[attackerMove]?.beats?.includes(defenderMove);
 
-    // Only apply defense if not beaten and defender is blocking
-    if (defenderConfig.type === "block" && !isBeaten) {
-        return Math.max(0, baseDamage - (defenderConfig.baseDefense || 0));
+    // Full block if defender uses a defensive move and isn't beaten
+    if ((defenderConfig.type === "block" || defenderConfig.type === "counter") && !isBeaten) {
+        return 0;
     }
+
     return baseDamage;
 }
 
@@ -151,9 +180,6 @@ function applyCooldowns(player: Player, cooldown?: { breakDefense?: number; brea
 
 function regenerateResources(player: Player, resources: ResourceConfig): void {
     if (resources[player.resourceType]) {
-        player.currentResource = Math.min(
-            player.currentResource + resources[player.resourceType].regenPerTurn,
-            player.maxResource
-        );
+        player.currentResource = Math.min(player.currentResource + resources[player.resourceType].regenPerTurn, player.maxResource);
     }
 }
