@@ -16,7 +16,7 @@ export function initializeState(overrides: Partial<GameState> = {}): GameState {
         breakroundleftdefence: 0,
         hp: 100,
         maxHp: 100,
-        powerBar: 1,
+        powerBar: 0,
         ...overrides,
     };
 }
@@ -237,7 +237,11 @@ function updatePlayerInfo(playerData: any, gameClient: GameClient, playerType: s
     viewManager.updateStat(playerData.hp, "hp", playerType);
     viewManager.updateStat(playerData.currentResource, "resource", playerType);
     viewManager.updateBar(playerData.currentResource);
-    gameClient.state.powerBar = playerData.powerBar;
+    if (playerType === "player") {
+        gameClient.state.powerBar = playerData.powerBar;
+    } else {
+        gameClient.state.opponentPowerBar = playerData.powerBar;
+    }
 }
 
 function updateGameState(data: any, gameClient: GameClient): void {

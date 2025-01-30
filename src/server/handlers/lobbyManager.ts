@@ -16,7 +16,7 @@ export function initializePlayerState(overrides: Partial<Player> = {}): Player {
         maxResource: 100,
         breakroundleftheal: 0,
         breakroundleftdefence: 0,
-        powerBar: 1,
+        powerBar: 0,
         resourceType: "Rage",
         ...overrides,
     };
