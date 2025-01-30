@@ -33,6 +33,7 @@ export class ViewManager {
         if (powerBarValue) {
             powerBarValue.textContent = powerBar.value;
         }
+
     }
 
     updateStat(

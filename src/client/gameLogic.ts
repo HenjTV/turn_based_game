@@ -16,7 +16,7 @@ export function initializeState(overrides: Partial<GameState> = {}): GameState {
         breakroundleftdefence: 0,
         hp: 100,
         maxHp: 100,
-        powerBar: 0,
+        powerBar: 1,
         ...overrides,
     };
 }
@@ -168,6 +168,7 @@ const messageHandlers: { [key: string]: (data: any, gameClient: GameClient) => v
         gameClient.selectors.playerCharacter.src = `/images/characters/${data.player.character}`;
         gameClient.selectors.opponentCharacter.src = `/images/characters/${data.opponent.character}`;
 
+        console.log("Game start:", data.player.powerBar, data.opponent.powerBar);
         updatePlayerInfo(data.player, gameClient, "player");
         updatePlayerInfo(data.opponent, gameClient, "opponent");
 
@@ -177,6 +178,7 @@ const messageHandlers: { [key: string]: (data: any, gameClient: GameClient) => v
 
     updateGame: (data, gameClient) => {
         updateGameState(data, gameClient);
+        console.log("updateGame:", data.player.powerBar, data.opponent.powerBar);
         updatePlayerInfo(data.player, gameClient, "player");
         updatePlayerInfo(data.opponent, gameClient, "opponent");
         gameClient.viewManager.toggleMoveButtons(true);
@@ -235,6 +237,7 @@ function updatePlayerInfo(playerData: any, gameClient: GameClient, playerType: s
     viewManager.updateStat(playerData.hp, "hp", playerType);
     viewManager.updateStat(playerData.currentResource, "resource", playerType);
     viewManager.updateBar(playerData.currentResource);
+    gameClient.state.powerBar = playerData.powerBar;
 }
 
 function updateGameState(data: any, gameClient: GameClient): void {

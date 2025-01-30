@@ -53,10 +53,13 @@ export function resolveMoves(player1: Player, player2: Player): void {
     player1.hp -= p2FinalDamage;
     player2.hp += p2Effect.heal;
 
+
     [player1, player2].forEach(player => {
-        player.currentResource -= player.powerBar;
+        player.currentResource = Math.max(player.currentResource - player.powerBar, 0);
+        if (player.powerBar > player.currentResource) {
+            player.powerBar = player.currentResource;
+        }
         player.hp = Math.min(player.hp, player.maxHp);
-        player.currentResource = Math.min(player.currentResource, player.maxResource);
 
         if (player.breakroundleftdefence > 0) player.breakroundleftdefence--;
         if (player.breakroundleftheal > 0) player.breakroundleftheal--;
@@ -71,21 +74,6 @@ export function resolveMoves(player1: Player, player2: Player): void {
     // Apply cooldowns
     applyCooldowns(player1, p2Effect.cooldown);
     applyCooldowns(player2, p1Effect.cooldown);
-}
-
-
-function getBaseEffect(config: MoveConfig, attacker: Player): number {
-    switch (config.type) {
-        case "damage":
-            return (config.baseDamage || 0) + (config.powerBarModifier || 0) * attacker.powerBar;
-        case "heal":
-            return (config.baseHeal || 0) + (config.powerBarModifier || 0) * attacker.powerBar;
-        case "block":
-        case "counter":
-            return 0;
-        default:
-            return 0;
-    }
 }
 
 // Shared interaction handling
@@ -179,7 +167,9 @@ function applyCooldowns(player: Player, cooldown?: { breakDefense?: number; brea
 }
 
 function regenerateResources(player: Player, resources: ResourceConfig): void {
-    if (resources[player.resourceType]) {
-        player.currentResource = Math.min(player.currentResource + resources[player.resourceType].regenPerTurn, player.maxResource);
-    }
+    // Regenerate resources
+    player.currentResource = Math.min(player.currentResource + 10, player.maxResource);
+    // if (resources[player.resourceType]) {
+    //     player.currentResource = Math.min(player.currentResource + resources[player.resourceType].regenPerTurn, player.maxResource);
+    // }
 }
