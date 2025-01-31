@@ -55,11 +55,21 @@ export function resolveMoves(player1: Player, player2: Player): void {
 
 
     [player1, player2].forEach(player => {
-        player.currentResource = Math.max(player.currentResource - player.powerBar, 0);
-        if (player.powerBar > player.currentResource) {
-            player.powerBar = player.currentResource;
+        player1.currentResource = Math.max(player1.currentResource - player1.powerBar, 0);
+        if (player1.powerBar > player1.currentResource) {
+        player1.powerBar = player1.currentResource;
         }
-        player.hp = Math.min(player.hp, player.maxHp);
+
+        player2.currentResource = Math.max(player2.currentResource - player2.powerBar, 0);
+        if (player2.powerBar > player2.currentResource) {
+        player2.powerBar = player2.currentResource;
+        }
+        
+        player2.hp -= p1Effect.damage || 0; // Урон от player1 к player2
+        player1.hp += p1Effect.heal || 0;   // Лечение player1
+
+        player1.hp -= p2Effect.damage || 0; // Урон от player2 к player1
+        player2.hp += p2Effect.heal || 0;   // Лечение player2
 
         if (player.breakroundleftdefence > 0) player.breakroundleftdefence--;
         if (player.breakroundleftheal > 0) player.breakroundleftheal--;
